@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Vault Test Runner</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            border-left: 4px solid #f7931a;
+            padding-left: 20px;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .test-item {
+            margin: 8px 0;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .test-item.pending {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+        }
+        .test-item.pass {
+            background: #d4edda;
+            border-left: 3px solid #28a745;
+        }
+        .test-item.fail {
+            background: #f8d7da;
+            border-left: 3px solid #dc3545;
+        }
+        .instructions {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .iframe-container {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            background: #f7931a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #e88609;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #f7931a;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Cross-Chain Bitcoin Yield Vault - Comprehensive Test Suite</h1>
+
+        <div class="instructions">
+            <h3>📋 Instructions</h3>
+            <p>This test suite will help you perform comprehensive end-to-end testing of the Bitcoin Yield Vault application.</p>
+            <ol>
+                <li>Open Chrome DevTools (F12 or Cmd+Opt+I)</li>
+                <li>Go to Console tab</li>
+                <li>Click "Start Testing" button below</li>
+                <li>Follow the step-by-step instructions in the console</li>
+                <li>Use the iframe below to interact with the application</li>
+            </ol>
+        </div>
+
+        <div class="controls">
+            <button onclick="startTesting()">🚀 Start Testing</button>
+            <button onclick="runPerformanceTest()">⚡ Performance Test</button>
+            <button onclick="runAccessibilityTest()">♿ Accessibility Test</button>
+            <button onclick="testResponsiveDesign()">📱 Responsive Test</button>
+            <button onclick="resetTests()">🔄 Reset Tests</button>
+        </div>
+
+        <div class="performance-metrics" id="performanceMetrics" style="display: none;">
+            <div class="metric-card">
+                <div class="metric-value" id="loadTime">--</div>
+                <div class="metric-label">Page Load Time (ms)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="lcp">--</div>
+                <div class="metric-label">LCP (ms)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="fid">--</div>
+                <div class="metric-label">FID (ms)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="cls">--</div>
+                <div class="metric-label">CLS</div>
+            </div>
+        </div>
+
+        <div id="testResults">
+            <!-- Test results will be populated here -->
+        </div>
+
+        <div class="iframe-container">
+            <iframe src="http://localhost:3000" id="appFrame" title="Bitcoin Vault Application"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const testSuite = {
+            '1. Application Landing & Initial State': [
+                { id: 'page_load', description: 'Page loads without errors', status: 'pending' },
+                { id: 'components_render', description: 'All components render correctly', status: 'pending' },
+                { id: 'initial_data', description: 'Initial data displays (vault balance: 0.52500000 BTC)', status: 'pending' },
+                { id: 'bitcoin_theme', description: 'Bitcoin-themed design elements present', status: 'pending' },
+                { id: 'header_nav', description: 'Header navigation functional', status: 'pending' }
+            ],
+            '2. Vault Management Interface': [
+                { id: 'vault_balance_card', description: 'Vault Balance Card shows correct data', status: 'pending' },
+                { id: 'balance_details', description: 'Balance details (Principal, Yield, Change, APR)', status: 'pending' },
+                { id: 'yield_overview', description: 'Yield Overview displays metrics', status: 'pending' },
+                { id: 'yield_strategies', description: 'Yield Strategies show breakdown', status: 'pending' }
+            ],
+            '3. Deposit Flow Testing': [
+                { id: 'deposit_button', description: 'Deposit button opens modal', status: 'pending' },
+                { id: 'modal_animation', description: 'Modal animation and backdrop work', status: 'pending' },
+                { id: 'amount_input', description: 'Amount input field focus and validation', status: 'pending' },
+                { id: 'quick_amounts', description: 'Quick amount buttons work', status: 'pending' },
+                { id: 'method_selection', description: 'Method selection (Bitcoin vs Lightning)', status: 'pending' },
+                { id: 'bitcoin_deposit', description: 'Bitcoin deposit method works', status: 'pending' },
+                { id: 'lightning_deposit', description: 'Lightning deposit method works', status: 'pending' }
+            ],
+            '4. Responsive Design Testing': [
+                { id: 'mobile_view', description: 'Mobile view (iPhone SE) works correctly', status: 'pending' },
+                { id: 'tablet_view', description: 'Tablet view (iPad) works correctly', status: 'pending' },
+                { id: 'desktop_view', description: 'Desktop view works across sizes', status: 'pending' }
+            ],
+            '5. Error Handling & Edge Cases': [
+                { id: 'form_validation', description: 'Invalid amount input validation', status: 'pending' },
+                { id: 'modal_behavior', description: 'Modal closing and backdrop click behavior', status: 'pending' },
+                { id: 'keyboard_navigation', description: 'Keyboard navigation works', status: 'pending' }
+            ]
+        };
+
+        function renderTestResults() {
+            const container = document.getElementById('testResults');
+            container.innerHTML = '';
+
+            for (const [section, tests] of Object.entries(testSuite)) {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'test-section';
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'test-title';
+                titleDiv.textContent = section;
+                sectionDiv.appendChild(titleDiv);
+
+                tests.forEach(test => {
+                    const testDiv = document.createElement('div');
+                    testDiv.className = `test-item ${test.status}`;
+                    testDiv.id = `test-${test.id}`;
+                    testDiv.innerHTML = `
+                        <span>${test.status === 'pending' ? '⏳' : test.status === 'pass' ? '✅' : '❌'}</span>
+                        ${test.description}
+                    `;
+                    sectionDiv.appendChild(testDiv);
+                });
+
+                container.appendChild(sectionDiv);
+            }
+        }
+
+        function updateTestStatus(testId, status) {
+            for (const [section, tests] of Object.entries(testSuite)) {
+                const test = tests.find(t => t.id === testId);
+                if (test) {
+                    test.status = status;
+                    renderTestResults();
+                    break;
+                }
+            }
+        }
+
+        function startTesting() {
+            console.log('🚀 Starting Comprehensive Bitcoin Vault Testing');
+            console.log('=============================================');
+
+            renderTestResults();
+
+            // Step-by-step testing instructions
+            console.log('\n📋 STEP 1: Application Landing & Initial State');
+            console.log('Check the iframe below for the following:');
+            console.log('✓ Page loads without errors');
+            console.log('✓ All components render correctly');
+            console.log('✓ Initial data displays (vault balance: 0.52500000 BTC)');
+            console.log('✓ Bitcoin-themed design elements present');
+            console.log('✓ Header navigation functional');
+
+            setTimeout(() => {
+                console.log('\n📋 STEP 2: Vault Management Interface');
+                console.log('Verify the following in the application:');
+                console.log('✓ Vault Balance Card shows correct data');
+                console.log('  - Total Balance: 0.52500000 BTC');
+                console.log('  - Principal: 0.50000000 BTC');
+                console.log('  - Yield Earned: 0.02500000 BTC');
+                console.log('  - 24h Change: +2.30%');
+                console.log('  - Current APR: 7.50%');
+                console.log('✓ Yield Overview displays metrics');
+                console.log('✓ Yield Strategies show breakdown');
+            }, 2000);
+
+            setTimeout(() => {
+                console.log('\n📋 STEP 3: Deposit Flow Testing');
+                console.log('Perform these actions in the application:');
+                console.log('1. Click the "Deposit" button');
+                console.log('2. Verify modal opens with smooth animation');
+                console.log('3. Test amount input: Enter 0.5');
+                console.log('4. Test quick amount buttons (0.001, 0.01, 0.1, 1 BTC)');
+                console.log('5. Test method selection (Bitcoin vs Lightning)');
+                console.log('6. For Bitcoin method:');
+                console.log('   - Enter amount: 0.5 BTC');
+                console.log('   - Verify USD value calculation');
+                console.log('   - Test form validation');
+                console.log('7. For Lightning method:');
+                console.log('   - Enter amount: 0.25 BTC');
+                console.log('   - Verify faster processing indication');
+
+                // Interactive test functions
+                window.testDepositModal = function() {
+                    console.log('Testing deposit modal...');
+                    const iframe = document.getElementById('appFrame');
+                    const depositButton = iframe.contentWindow.document.querySelector('button');
+                    if (depositButton) {
+                        depositButton.click();
+                        console.log('✓ Deposit button clicked');
+                    } else {
+                        console.log('❌ Deposit button not found');
+                    }
+                };
+
+                console.log('\n🎯 Quick Test Commands:');
+                console.log('Run testDepositModal() in console to test deposit button');
+            }, 4000);
+
+            console.log('\n📋 STEP 4: Manual Validation');
+            console.log('Update test status using these commands:');
+            console.log('updateTestStatus("page_load", "pass")');
+            console.log('updateTestStatus("components_render", "pass")');
+            console.log('updateTestStatus("deposit_button", "pass")');
+            console.log('updateTestStatus("modal_animation", "pass")');
+        }
+
+        function runPerformanceTest() {
+            console.log('⚡ Running Performance Tests...');
+            document.getElementById('performanceMetrics').style.display = 'grid';
+
+            const iframe = document.getElementById('appFrame');
+            iframe.onload = function() {
+                const loadTime = performance.now();
+                document.getElementById('loadTime').textContent = Math.round(loadTime);
+
+                // Get performance metrics from iframe
+                try {
+                    const iframeContent = iframe.contentWindow;
+                    const navigation = iframeContent.performance.timing;
+                    const loadTimeMs = navigation.loadEventEnd - navigation.navigationStart;
+                    document.getElementById('loadTime').textContent = loadTimeMs;
+
+                    console.log(`✓ Page Load Time: ${loadTimeMs}ms`);
+                    console.log('✓ LCP, FID, CLS metrics would be collected here');
+                } catch (e) {
+                    console.log('⚠️ Cross-origin restrictions prevent detailed performance analysis');
+                }
+            };
+        }
+
+        function runAccessibilityTest() {
+            console.log('♿ Running Accessibility Tests...');
+            console.log('Manual accessibility checklist:');
+            console.log('✓ Tab through all interactive elements');
+            console.log('✓ Verify focus indicators are visible');
+            console.log('✓ Test keyboard navigation (Enter, Space, Escape)');
+            console.log('✓ Check color contrast');
+            console.log('✓ Verify semantic HTML structure');
+
+            // Open Chrome DevTools to Lighthouse tab
+            console.log('\n🎯 Automated Testing:');
+            console.log('1. Open Chrome DevTools');
+            console.log('2. Go to Lighthouse tab');
+            console.log('3. Select Accessibility category');
+            console.log('4. Click "Generate report"');
+        }
+
+        function testResponsiveDesign() {
+            console.log('📱 Testing Responsive Design...');
+            console.log('Manual responsive testing:');
+            console.log('1. Open Chrome DevTools');
+            console.log('2. Toggle device toolbar');
+            console.log('3. Test viewports:');
+            console.log('   - iPhone SE: 375x667');
+            console.log('   - iPhone 12: 390x844');
+            console.log('   - iPad: 768x1024');
+            console.log('   - Desktop: 1920x1080');
+
+            const iframe = document.getElementById('appFrame');
+            iframe.style.width = '375px';
+            iframe.style.height = '667px';
+
+            setTimeout(() => {
+                iframe.style.width = '100%';
+                iframe.style.height = '800px';
+            }, 5000);
+        }
+
+        function resetTests() {
+            for (const [section, tests] of Object.entries(testSuite)) {
+                tests.forEach(test => {
+                    test.status = 'pending';
+                });
+            }
+            renderTestResults();
+            document.getElementById('performanceMetrics').style.display = 'none';
+            console.log('🔄 Tests reset successfully');
+        }
+
+        // Make functions available globally
+        window.updateTestStatus = updateTestStatus;
+        window.testSuite = testSuite;
+
+        // Initial render
+        renderTestResults();
+
+        // Auto-run performance metrics
+        setTimeout(runPerformanceTest, 2000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrossBTC Performance Analysis Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f7931a 0%, #ffad2f 100%);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(247, 147, 26, 0.3);
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .score {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+        }
+        .status {
+            font-size: 1.5em;
+            font-weight: 600;
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .status.Excellent { background: rgba(16, 185, 129, 0.9); }
+        .status.Good { background: rgba(59, 130, 246, 0.9); }
+        .status.Fair { background: rgba(245, 158, 11, 0.9); }
+        .status.Needs-Improvement { background: rgba(239, 68, 68, 0.9); }
+        .section {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(247, 147, 26, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .section h2 {
+            color: #f7931a;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(247, 147, 26, 0.2);
+        }
+        .metric:last-child { border-bottom: none; }
+        .metric-label {
+            font-weight: 500;
+            color: #94a3b8;
+            font-size: 1.1em;
+        }
+        .metric-value {
+            font-weight: 600;
+            color: #f1f5f9;
+            font-size: 1.2em;
+        }
+        .recommendations {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        .recommendation {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #f7931a;
+        }
+        .recommendation h4 {
+            color: #f7931a;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        .priority {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .priority.High { background: rgba(239, 68, 68, 0.8); }
+        .priority.Medium { background: rgba(245, 158, 11, 0.8); }
+        .priority.Low { background: rgba(16, 185, 129, 0.8); }
+        .code-block {
+            background: #0f172a;
+            border: 1px solid rgba(247, 147, 26, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            color: #94a3b8;
+        }
+        .chart-container {
+            margin: 30px 0;
+            height: 400px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .next-steps {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        .next-steps ol {
+            padding-left: 20px;
+        }
+        .next-steps li {
+            margin: 15px 0;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header { padding: 30px 15px; }
+            .header h1 { font-size: 2em; }
+            .score { font-size: 3em; }
+            .section { padding: 20px; margin: 20px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 CrossBTC Yield Vault</h1>
+            <h2>Performance Analysis Report</h2>
+            <div class="score">90/100</div>
+            <div class="status Excellent">Excellent</div>
+            <p>Generated on 10/5/2025, 1:51:35 PM</p>
+        </div>
+
+        
+        <div class="section">
+            <h2>🌐 Network Performance</h2>
+            <div class="metric">
+                <span class="metric-label">Server Response Time</span>
+                <span class="metric-value">74ms</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Status Code</span>
+                <span class="metric-value">500</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Content Type</span>
+                <span class="metric-value">unknown</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Content Length</span>
+                <span class="metric-value">0.00KB</span>
+            </div>
+        </div>
+        
+
+        
+        <div class="section">
+            <h2>📦 Bundle Analysis</h2>
+            <div class="metric">
+                <span class="metric-label">Next.js Build Size</span>
+                <span class="metric-value">31.46MB</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Component Files</span>
+                <span class="metric-value">10</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Page Files</span>
+                <span class="metric-value">2</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Total Dependencies</span>
+                <span class="metric-value">21</span>
+            </div>
+        </div>
+        
+
+        
+        <div class="section">
+            <h2>🔍 Code Complexity</h2>
+            <div class="metric">
+                <span class="metric-label">Total Lines of Code</span>
+                <span class="metric-value">1124</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">React Components</span>
+                <span class="metric-value">10</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">React Hooks Usage</span>
+                <span class="metric-value">4</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Pages</span>
+                <span class="metric-value">2</span>
+            </div>
+        </div>
+        
+
+        
+        <div class="section">
+            <h2>📊 Performance Score Breakdown</h2>
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+        
+
+        <div class="section recommendations">
+            <h2>💡 Optimization Recommendations</h2>
+            <p>Found 8 recommendations to improve performance:</p>
+            
+                <div class="recommendation">
+                    <h4>
+                        Implement Code Splitting
+                        <span class="priority High">High Priority</span>
+                    </h4>
+                    <p><strong>Category:</strong> Performance</p>
+                    <p>Use dynamic imports for large components and third-party libraries to reduce initial bundle size.</p>
+                    <div class="code-block"><pre>const Component = dynamic(() => import('./Component'), {
+      loading: () => <Loading />
+    });</pre></div>
+                </div>
+            
+                <div class="recommendation">
+                    <h4>
+                        Optimize Images
+                        <span class="priority High">High Priority</span>
+                    </h4>
+                    <p><strong>Category:</strong> Performance</p>
+                    <p>Use Next.js Image component with proper sizing and optimization settings.</p>
+                    <div class="code-block"><pre><Image
+      src="/bitcoin-logo.png"
+      alt="Bitcoin"
+      width={500}
+      height={300}
+      priority
+      placeholder="blur"
+    /></pre></div>
+                </div>
+            
+                <div class="recommendation">
+                    <h4>
+                        Implement Caching Strategy
+                        <span class="priority Medium">Medium Priority</span>
+                    </h4>
+                    <p><strong>Category:</strong> Performance</p>
+                    <p>Add proper caching headers and implement service worker for offline functionality.</p>
+                    <div class="code-block"><pre>export async function getServerSideProps({ res }) {
+      res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=60, stale-while-revalidate=30'
+      );
+      return { props: {} };
+    }</pre></div>
+                </div>
+            
+                <div class="recommendation">
+                    <h4>
+                        Optimize React Component State
+                        <span class="priority Medium">Medium Priority</span>
+                    </h4>
+                    <p><strong>Category:</strong> Memory</p>
+                    <p>Use useMemo and useCallback to prevent unnecessary re-renders and memory allocations.</p>
+                    <div class="code-block"><pre>const memoizedValue = useMemo(() =>
+      computeExpensiveValue(a, b), [a, b]
+    );
+
+    const memoizedCallback = useCallback(
+      () => doSomething(a, b),
+      [a, b]
+    );</pre></div>
+                </div>
+            
+                <div class="recommendation">
+                    <h4>
+                        Tree Shaking and Dead Code Elimination
+                        <span class="priority High">High Priority</span>
+                    </h4>
+                    <p><strong>Category:</strong> Bundle Size</p>
+                    <p>Ensure only used code is included in the bundle by optimizing imports.</p>
+                    <div class="code-block"><pre>// Instead of importing entire library
+    import _ from 'lodash';
+
+    // Import specific functions
+    import { debounce, throttle } from 'lodash-es';</pre></div>
+                </div>
+            
+                <div class="recommendation">
+                    <h4>
+                        Use Bundle Analyzer
+                        <span class="priority Medium">Medium Priority</span>
+                    </h4>
+                    <p><strong>Category:</strong> Bundle Size</p>
+                    <p>Install and use @next/bundle-analyzer to identify large dependencies.</p>
+                    <div class="code-block"><pre>const withBundleAnalyzer = require('@next/bundle-analyzer')({
+      enabled: process.env.ANALYZE === 'true',
+    });
+
+    module.exports = withBundleAnalyzer({});</pre></div>
+                </div>
+            
+                <div class="recommendation">
+                    <h4>
+                        Implement ARIA Labels
+                        <span class="priority High">High Priority</span>
+                    </h4>
+                    <p><strong>Category:</strong> Accessibility</p>
+                    <p>Add proper ARIA labels and semantic HTML for better accessibility.</p>
+                    <div class="code-block"><pre><button
+      aria-label="Deposit Bitcoin"
+      aria-describedby="deposit-help"
+    >
+      Deposit
+    </button>
+    <div id="deposit-help">
+      Deposit your Bitcoin to earn yield
+    </div></pre></div>
+                </div>
+            
+                <div class="recommendation">
+                    <h4>
+                        Content Security Policy
+                        <span class="priority High">High Priority</span>
+                    </h4>
+                    <p><strong>Category:</strong> Security</p>
+                    <p>Implement CSP headers to prevent XSS attacks.</p>
+                    <div class="code-block"><pre>See Next.js documentation for CSP implementation with next-secure-headers package</pre></div>
+                </div>
+            
+        </div>
+
+        <div class="section next-steps">
+            <h2>🎯 Next Steps</h2>
+            <ol>
+                <li>1. Implement high-priority recommendations first</li><li>2. Set up continuous performance monitoring</li><li>3. Create performance budgets for bundle sizes</li><li>4. Implement automated performance testing in CI/CD</li><li>5. Regular performance audits and optimizations</li><li>6. Monitor Core Web Vitals in production</li><li>7. Set up alerts for performance degradation</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('performanceChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Server Response', 'Bundle Size', 'Code Organization', 'Configuration', 'Framework Setup'],
+                    datasets: [{
+                        label: 'Current Score',
+                        data: [85, 75, 90, 80, 100],
+                        backgroundColor: 'rgba(247, 147, 26, 0.2)',
+                        borderColor: 'rgba(247, 147, 26, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(247, 147, 26, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(247, 147, 26, 1)'
+                    }, {
+                        label: 'Target Score',
+                        data: [90, 90, 90, 90, 90],
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1,
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e2e8f0'
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#94a3b8'
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            pointLabels: {
+                                color: '#e2e8f0'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

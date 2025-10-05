@@ -1,0 +1,136 @@
+{
+  "name": "crossbtc-vault",
+  "version": "1.0.0",
+  "description": "Cross-Chain Bitcoin Yield Vault with Instant Payments",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
+    "dev:web": "cd packages/web && npm run dev",
+    "dev:api": "cd packages/api && npm run dev",
+    "dev:mobile": "cd packages/mobile && npm run start",
+    "build": "npm run build:web && npm run build:api && npm run build:mobile",
+    "build:web": "cd packages/web && npm run build",
+    "build:api": "cd packages/api && npm run build",
+    "build:mobile": "cd packages/mobile && npm run build",
+    "start": "concurrently \"npm run start:web\" \"npm run start:api\"",
+    "start:web": "cd packages/web && npm start",
+    "start:api": "cd packages/api && npm start",
+    "test": "npm run test:web && npm run test:mobile",
+    "test:web": "cd packages/web && npm run test",
+    "test:mobile": "cd packages/mobile && npm run test",
+    "test:e2e": "cd packages/web && npm run test:e2e",
+    "test:ci": "npm run test:web -- --ci --coverage && npm run test:mobile -- --ci --coverage",
+    "lint": "npm run lint:web && npm run lint:mobile",
+    "lint:web": "cd packages/web && npm run lint",
+    "lint:mobile": "cd packages/mobile && npm run lint",
+    "lint:fix": "npm run lint:web -- --fix && npm run lint:mobile -- --fix",
+    "type-check": "npm run type-check:web && npm run type-check:mobile",
+    "type-check:web": "cd packages/web && npm run type-check",
+    "type-check:mobile": "cd packages/mobile && npm run type-check",
+    "format": "prettier --write \"packages/**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"packages/**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "clean": "npm run clean:web && npm run clean:mobile",
+    "clean:web": "cd packages/web && rm -rf .next node_modules",
+    "clean:mobile": "cd packages/mobile && rm -rf node_modules",
+    "bootstrap": "npm install && npm run build",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "mobile:ios": "cd packages/mobile && npm run ios",
+    "mobile:android": "cd packages/mobile && npm run android",
+    "mobile:build:ios": "cd packages/mobile && npm run build:ios",
+    "mobile:build:android": "cd packages/mobile && npm run build:android",
+    "security:audit": "npm audit && cd packages/web && npm audit && cd ../mobile && npm audit",
+    "security:check": "npm run security:audit && npm run lint && npm run type-check",
+    "deploy:staging": "vercel --env=staging",
+    "deploy:production": "vercel --env=production",
+    "prepare": "husky install",
+    "commit": "git-cz",
+    "release": "semantic-release"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.7.1",
+    "@commitlint/config-conventional": "^17.7.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "commitizen": "^4.3.0",
+    "concurrently": "^8.2.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.49.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
+    "prettier": "^3.0.3",
+    "semantic-release": "^21.1.1",
+    "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crossbtc/vault.git"
+  },
+  "keywords": [
+    "bitcoin",
+    "defi",
+    "yield",
+    "vault",
+    "cross-chain",
+    "starknet",
+    "lightning",
+    "react-native",
+    "nextjs",
+    "typescript"
+  ],
+  "author": "CrossBTC Team <team@crossbtc.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/crossbtc/vault/issues"
+  },
+  "homepage": "https://crossbtc.io",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md",
+            "package.json"
+          ]
+        }
+      ]
+    ]
+  }
+}

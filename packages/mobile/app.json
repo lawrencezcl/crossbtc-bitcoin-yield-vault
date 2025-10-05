@@ -1,0 +1,27 @@
+{
+  "name": "CrossBTCVault",
+  "displayName": "CrossBTC Vault",
+  "version": "1.0.0",
+  "description": "Cross-Chain Bitcoin Yield Vault with Instant Payments",
+  "orientation": "portrait",
+  "icon": "./assets/icon.png",
+  "splash": {
+    "image": "./assets/splash.png",
+    "resizeMode": "contain",
+    "backgroundColor": "#F27A24"
+  },
+  "platforms": ["ios", "android"],
+  "ios": {
+    "bundleIdentifier": "com.crossbtc.vault",
+    "buildNumber": "1.0.0",
+    "supportsTablet": false
+  },
+  "android": {
+    "package": "com.crossbtc.vault",
+    "versionCode": 1,
+    "adaptiveIcon": {
+      "foregroundImage": "./assets/adaptive-icon.png",
+      "backgroundColor": "#F27A24"
+    }
+  }
+}

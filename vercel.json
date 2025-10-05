@@ -1,0 +1,87 @@
+{
+  "version": 2,
+  "name": "crossbtc-vault",
+  "builds": [
+    {
+      "src": "packages/web/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "distDir": "packages/web/.next"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "packages/web/$1"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://crossbtc-vault.vercel.app/api",
+    "NEXT_PUBLIC_WS_URL": "wss://crossbtc-vault.vercel.app",
+    "NEXT_PUBLIC_BITCOIN_RPC_URL": "https://bitcoin-mainnet.rpc.coindesk.com",
+    "NEXT_PUBLIC_STARKNET_RPC_URL": "https://starknet-mainnet.infura.io/v3/YOUR_KEY",
+    "NEXT_PUBLIC_XVERSE_API_KEY": "@xverse-api-key",
+    "NEXT_PUBLIC_CHIPI_API_KEY": "@chipi-api-key"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+  "functions": {
+    "packages/web/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https: wss: https://vercel.live"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/vault",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/yield",
+      "destination": "/strategies",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ]
+}

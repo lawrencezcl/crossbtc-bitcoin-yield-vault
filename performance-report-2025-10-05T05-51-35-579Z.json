@@ -1,0 +1,235 @@
+{
+  "timestamp": "2025-10-05T05:51:35.437Z",
+  "url": "http://localhost:3002",
+  "summary": {
+    "overallScore": 90,
+    "scoreFactors": [
+      "Server Response: Excellent",
+      "Bundle Size: Large",
+      "Code Organization: Well Structured",
+      "Configuration: Optimized",
+      "Next.js Setup: Modern Framework"
+    ],
+    "status": "Excellent",
+    "totalRecommendations": 8
+  },
+  "network": {
+    "statusCode": 500,
+    "responseTime": 74,
+    "headers": {
+      "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+      "date": "Sun, 05 Oct 2025 05:51:35 GMT",
+      "connection": "close",
+      "transfer-encoding": "chunked"
+    },
+    "contentLength": 0,
+    "contentType": "unknown"
+  },
+  "bundleAnalysis": {
+    "nextBuild": {
+      "exists": true,
+      "size": 32992114
+    },
+    "nodeModules": {
+      "exists": true,
+      "size": 34506379
+    },
+    "sourceFiles": {
+      "components": 10,
+      "pages": 2,
+      "styles": 1
+    },
+    "dependencies": {
+      "total": 21,
+      "devDependencies": 17,
+      "heavyDependencies": [
+        {
+          "name": "@radix-ui/react-avatar",
+          "version": "^1.0.4",
+          "size": "42KB"
+        },
+        {
+          "name": "@radix-ui/react-dialog",
+          "version": "^1.0.5",
+          "size": "42KB"
+        },
+        {
+          "name": "@radix-ui/react-dropdown-menu",
+          "version": "^2.0.6",
+          "size": "42KB"
+        },
+        {
+          "name": "@radix-ui/react-label",
+          "version": "^2.0.2",
+          "size": "42KB"
+        },
+        {
+          "name": "@radix-ui/react-progress",
+          "version": "^1.0.3",
+          "size": "42KB"
+        },
+        {
+          "name": "@radix-ui/react-slot",
+          "version": "^1.0.2",
+          "size": "42KB"
+        },
+        {
+          "name": "@radix-ui/react-switch",
+          "version": "^1.0.3",
+          "size": "42KB"
+        },
+        {
+          "name": "@radix-ui/react-tabs",
+          "version": "^1.0.4",
+          "size": "42KB"
+        },
+        {
+          "name": "@radix-ui/react-toast",
+          "version": "^1.1.5",
+          "size": "42KB"
+        },
+        {
+          "name": "@starknet-react/core",
+          "version": "^2.0.0",
+          "size": "42KB"
+        },
+        {
+          "name": "@tanstack/react-query",
+          "version": "^5.0.0",
+          "size": "42KB"
+        },
+        {
+          "name": "lucide-react",
+          "version": "^0.294.0",
+          "size": "42KB"
+        },
+        {
+          "name": "next",
+          "version": "12.3.4",
+          "size": "1.2MB"
+        },
+        {
+          "name": "react",
+          "version": "^18.2.0",
+          "size": "42KB"
+        },
+        {
+          "name": "react-dom",
+          "version": "^18.2.0",
+          "size": "42KB"
+        },
+        {
+          "name": "recharts",
+          "version": "^2.8.0",
+          "size": "400KB"
+        },
+        {
+          "name": "tailwindcss-animate",
+          "version": "^1.0.7",
+          "size": "4.6MB"
+        },
+        {
+          "name": "viem",
+          "version": "^1.18.0",
+          "size": "500KB"
+        }
+      ]
+    }
+  },
+  "complexity": {
+    "totalLines": 1124,
+    "componentCount": 10,
+    "hookCount": 4,
+    "utilityCount": 0,
+    "complexityMetrics": {},
+    "pageCount": 2
+  },
+  "configuration": {
+    "nextConfig": {
+      "optimizations": [
+        "SWC Minification"
+      ],
+      "compressionEnabled": false,
+      "imageOptimization": false,
+      "experimentalFeatures": false
+    },
+    "tailwindConfig": {
+      "jitEnabled": true,
+      "purgeEnabled": true,
+      "customTheme": false
+    },
+    "typeScriptConfig": {
+      "strictMode": true,
+      "target": "es5",
+      "moduleResolution": "node",
+      "skipLibCheck": true
+    }
+  },
+  "recommendations": [
+    {
+      "category": "Performance",
+      "priority": "High",
+      "title": "Implement Code Splitting",
+      "description": "Use dynamic imports for large components and third-party libraries to reduce initial bundle size.",
+      "code": "const Component = dynamic(() => import('./Component'), {\n      loading: () => <Loading />\n    });"
+    },
+    {
+      "category": "Performance",
+      "priority": "High",
+      "title": "Optimize Images",
+      "description": "Use Next.js Image component with proper sizing and optimization settings.",
+      "code": "<Image\n      src=\"/bitcoin-logo.png\"\n      alt=\"Bitcoin\"\n      width={500}\n      height={300}\n      priority\n      placeholder=\"blur\"\n    />"
+    },
+    {
+      "category": "Performance",
+      "priority": "Medium",
+      "title": "Implement Caching Strategy",
+      "description": "Add proper caching headers and implement service worker for offline functionality.",
+      "code": "export async function getServerSideProps({ res }) {\n      res.setHeader(\n        'Cache-Control',\n        'public, s-maxage=60, stale-while-revalidate=30'\n      );\n      return { props: {} };\n    }"
+    },
+    {
+      "category": "Memory",
+      "priority": "Medium",
+      "title": "Optimize React Component State",
+      "description": "Use useMemo and useCallback to prevent unnecessary re-renders and memory allocations.",
+      "code": "const memoizedValue = useMemo(() =>\n      computeExpensiveValue(a, b), [a, b]\n    );\n\n    const memoizedCallback = useCallback(\n      () => doSomething(a, b),\n      [a, b]\n    );"
+    },
+    {
+      "category": "Bundle Size",
+      "priority": "High",
+      "title": "Tree Shaking and Dead Code Elimination",
+      "description": "Ensure only used code is included in the bundle by optimizing imports.",
+      "code": "// Instead of importing entire library\n    import _ from 'lodash';\n\n    // Import specific functions\n    import { debounce, throttle } from 'lodash-es';"
+    },
+    {
+      "category": "Bundle Size",
+      "priority": "Medium",
+      "title": "Use Bundle Analyzer",
+      "description": "Install and use @next/bundle-analyzer to identify large dependencies.",
+      "code": "const withBundleAnalyzer = require('@next/bundle-analyzer')({\n      enabled: process.env.ANALYZE === 'true',\n    });\n\n    module.exports = withBundleAnalyzer({});"
+    },
+    {
+      "category": "Accessibility",
+      "priority": "High",
+      "title": "Implement ARIA Labels",
+      "description": "Add proper ARIA labels and semantic HTML for better accessibility.",
+      "code": "<button\n      aria-label=\"Deposit Bitcoin\"\n      aria-describedby=\"deposit-help\"\n    >\n      Deposit\n    </button>\n    <div id=\"deposit-help\">\n      Deposit your Bitcoin to earn yield\n    </div>"
+    },
+    {
+      "category": "Security",
+      "priority": "High",
+      "title": "Content Security Policy",
+      "description": "Implement CSP headers to prevent XSS attacks.",
+      "code": "See Next.js documentation for CSP implementation with next-secure-headers package"
+    }
+  ],
+  "nextSteps": [
+    "1. Implement high-priority recommendations first",
+    "2. Set up continuous performance monitoring",
+    "3. Create performance budgets for bundle sizes",
+    "4. Implement automated performance testing in CI/CD",
+    "5. Regular performance audits and optimizations",
+    "6. Monitor Core Web Vitals in production",
+    "7. Set up alerts for performance degradation"
+  ]
+}
