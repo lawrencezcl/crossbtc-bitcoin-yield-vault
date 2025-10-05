@@ -43,9 +43,6 @@ export default defineConfig({
 
     /* Global timeout for each action */
     actionTimeout: 10000,
-
-    /* Global timeout for each test */
-    timeout: 30000,
   },
 
   /* Configure projects for major browsers */
@@ -132,7 +129,7 @@ export default defineConfig({
 
     /* Take screenshot on expectation failure */
     toHaveScreenshot: {
-      animation: 'disabled',
+      animations: 'disabled',
       caret: 'hide',
     },
   },

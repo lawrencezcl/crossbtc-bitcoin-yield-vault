@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>CrossBTC Mobile - Bitcoin Yield Vault UI Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #0A0A0A;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+
+        .mobile-container {
+            max-width: 375px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: #0A0A0A;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (max-width: 375px) {
+            .mobile-container {
+                max-width: 100%;
+            }
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            background-color: #0A0A0A;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #F7931A;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #A0A0A0;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: #1A1A1A;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 12px;
+            color: #A0A0A0;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: #F7931A;
+            margin-bottom: 4px;
+        }
+
+        .balance-usd {
+            font-size: 16px;
+            color: #A0A0A0;
+            margin-bottom: 24px;
+        }
+
+        .balance-breakdown {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 16px;
+            border-top: 1px solid #333;
+        }
+
+        .balance-item {
+            text-align: center;
+        }
+
+        .balance-item-label {
+            font-size: 12px;
+            color: #A0A0A0;
+            margin-bottom: 4px;
+        }
+
+        .balance-item-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .yield-value {
+            color: #10B981;
+        }
+
+        /* Yield Overview */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #A0A0A0;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .apr-value {
+            font-size: 24px;
+            color: #10B981;
+        }
+
+        /* Action Buttons */
+        .action-button {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            color: #FFFFFF;
+        }
+
+        .action-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .deposit-button {
+            background-color: #F7931A;
+        }
+
+        .withdraw-button {
+            background-color: #2A2A2A;
+            border: 1px solid #333;
+        }
+
+        .claim-button {
+            background-color: #10B981;
+        }
+
+        /* Strategies */
+        .strategy-item {
+            margin-bottom: 16px;
+        }
+
+        .strategy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .strategy-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #FFFFFF;
+        }
+
+        .strategy-apr {
+            font-size: 14px;
+            color: #10B981;
+            font-weight: 600;
+        }
+
+        .allocation-bar {
+            height: 8px;
+            background-color: #2A2A2A;
+            border-radius: 4px;
+            margin-bottom: 4px;
+        }
+
+        .allocation-fill {
+            height: 100%;
+            background-color: #F7931A;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .allocation-text {
+            font-size: 12px;
+            color: #707070;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background-color: #1A1A1A;
+            border-top: 1px solid #333;
+            padding: 8px 0 20px 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .nav-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #A0A0A0;
+        }
+
+        .nav-item.active .nav-label {
+            color: #F7931A;
+        }
+
+        /* Icons */
+        .bitcoin-icon {
+            background-color: #F7931A;
+            color: #FFFFFF;
+        }
+
+        .lightning-icon {
+            background-color: #FBB040;
+            color: #FFFFFF;
+        }
+
+        .starknet-icon {
+            background-color: #6B46C1;
+            color: #FFFFFF;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #333;
+            border-top: 2px solid #F7931A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Info Section */
+        .info-section {
+            margin-top: 32px;
+            padding: 16px;
+            background-color: #1A1A1A;
+            border-radius: 12px;
+        }
+
+        .info-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #A0A0A0;
+            line-height: 1.6;
+        }
+
+        /* Tab Navigation */
+        .tab-container {
+            display: flex;
+            background-color: #1A1A1A;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #A0A0A0;
+        }
+
+        .tab.active {
+            background-color: #F7931A;
+            color: #FFFFFF;
+        }
+
+        /* Payment List */
+        .payment-list {
+            margin-top: 16px;
+        }
+
+        .payment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: #2A2A2A;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .payment-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #1A1A1A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-description {
+            font-size: 16px;
+            font-weight: 500;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+        }
+
+        .payment-time {
+            font-size: 14px;
+            color: #A0A0A0;
+        }
+
+        .payment-right {
+            text-align: right;
+        }
+
+        .payment-amount {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+        }
+
+        .payment-amount.negative {
+            color: #A0A0A0;
+        }
+
+        .payment-amount.positive {
+            color: #FFFFFF;
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        .status-dot.completed {
+            background-color: #10B981;
+        }
+
+        .status-dot.pending {
+            background-color: #F59E0B;
+        }
+
+        .status-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-text.completed {
+            color: #10B981;
+        }
+
+        .status-text.pending {
+            color: #F59E0B;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span>9:41</span>
+            </div>
+            <div class="status-right">
+                <span>📶</span>
+                <span>📶</span>
+                <span>🔋</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="main-content">
+            <!-- Content will be dynamically loaded here -->
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-container">
+                <div class="nav-item active" onclick="showHome()">
+                    <div class="nav-icon bitcoin-icon">₿</div>
+                    <div class="nav-label">Vault</div>
+                </div>
+                <div class="nav-item" onclick="showWallet()">
+                    <div class="nav-icon lightning-icon">⚡</div>
+                    <div class="nav-label">Payments</div>
+                </div>
+                <div class="nav-item" onclick="showSettings()">
+                    <div class="nav-icon starknet-icon">◈</div>
+                    <div class="nav-label">Settings</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data
+        const vaultData = {
+            balance: 0.52500000,
+            principal: 0.50000000,
+            yield: 0.02500000,
+            apr: 8.5,
+            totalYield: 0.02500000,
+            strategies: [
+                { name: 'Troves Lending', allocation: 40, apr: 8.5 },
+                { name: 'Vesu Borrowing', allocation: 35, apr: 9.2 },
+                { name: 'Lido Staking', allocation: 25, apr: 6.8 },
+            ]
+        };
+
+        const walletData = {
+            lightning: { balance: 0.02500000, currency: 'BTC' },
+            bitcoin: { balance: 0.00050000, currency: 'BTC' },
+            payments: [
+                {
+                    type: 'lightning',
+                    amount: 0.00100000,
+                    timestamp: new Date('2024-01-15T10:30:00'),
+                    status: 'completed',
+                    description: 'Coffee payment'
+                },
+                {
+                    type: 'bitcoin',
+                    amount: 0.00050000,
+                    timestamp: new Date('2024-01-14T15:45:00'),
+                    status: 'completed',
+                    description: 'Received from friend'
+                },
+                {
+                    type: 'lightning',
+                    amount: 0.00250000,
+                    timestamp: new Date('2024-01-13T09:15:00'),
+                    status: 'completed',
+                    description: 'Online purchase'
+                },
+                {
+                    type: 'lightning',
+                    amount: 0.00080000,
+                    timestamp: new Date('2024-01-12T18:20:00'),
+                    status: 'pending',
+                    description: 'Pending payment'
+                }
+            ]
+        };
+
+        // Show Home Screen
+        function showHome() {
+            updateActiveNav(0);
+            const mainContent = document.getElementById('main-content');
+
+            const monthlyYield = (vaultData.balance * vaultData.apr) / 12;
+            const projectedAnnualYield = vaultData.balance * vaultData.apr;
+            const totalUsd = vaultData.balance * 43000;
+
+            mainContent.innerHTML = `
+                <div class="header">
+                    <div class="title">CrossBTC Vault</div>
+                    <div class="subtitle">Bitcoin Yield with Instant Access</div>
+                </div>
+
+                <!-- Balance Card -->
+                <div class="card">
+                    <div class="card-title">Total Balance</div>
+                    <div class="balance-amount">${vaultData.balance.toFixed(8)} BTC</div>
+                    <div class="balance-usd">≈ $${totalUsd.toLocaleString()}</div>
+
+                    <div class="balance-breakdown">
+                        <div class="balance-item">
+                            <div class="balance-item-label">Principal</div>
+                            <div class="balance-item-value">${vaultData.principal.toFixed(8)} BTC</div>
+                        </div>
+                        <div class="balance-item">
+                            <div class="balance-item-label">Yield Earned</div>
+                            <div class="balance-item-value yield-value">+${vaultData.yield.toFixed(8)} BTC</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yield Overview -->
+                <div class="card">
+                    <div class="card-title">Yield Overview</div>
+
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-label">Current APR</div>
+                            <div class="metric-value apr-value">${vaultData.apr}%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Total Yield</div>
+                            <div class="metric-value">${vaultData.totalYield.toFixed(8)} BTC</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Monthly Yield</div>
+                            <div class="metric-value">${monthlyYield.toFixed(8)} BTC</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Projected Annual</div>
+                            <div class="metric-value">${projectedAnnualYield.toFixed(8)} BTC</div>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid #333; padding-top: 16px;">
+                        <div class="card-title" style="margin-bottom: 16px;">Active Strategies</div>
+                        ${vaultData.strategies.map(strategy => `
+                            <div class="strategy-item">
+                                <div class="strategy-header">
+                                    <div class="strategy-name">${strategy.name}</div>
+                                    <div class="strategy-apr">${strategy.apr}% APR</div>
+                                </div>
+                                <div class="allocation-bar">
+                                    <div class="allocation-fill" style="width: ${strategy.allocation}%"></div>
+                                </div>
+                                <div class="allocation-text">${strategy.allocation}% allocation</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <button class="action-button deposit-button" onclick="handleDeposit()">
+                    Deposit Bitcoin
+                </button>
+                <button class="action-button withdraw-button" onclick="handleWithdraw()">
+                    Withdraw Bitcoin
+                </button>
+                <button class="action-button claim-button" onclick="handleClaimYield()">
+                    Claim Yield
+                </button>
+
+                <!-- Info Section -->
+                <div class="info-section">
+                    <div class="info-title">How it works</div>
+                    <div class="info-text">
+                        Deposit Bitcoin to earn yield through DeFi strategies on Starknet.
+                        Access instant payments via Lightning Network while your Bitcoin
+                        continues to generate yield in the background.
+                    </div>
+                </div>
+            `;
+
+            // Animate allocation bars
+            setTimeout(() => {
+                document.querySelectorAll('.allocation-fill').forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 100);
+                });
+            }, 100);
+        }
+
+        // Show Wallet Screen
+        function showWallet() {
+            updateActiveNav(1);
+            const mainContent = document.getElementById('main-content');
+
+            mainContent.innerHTML = `
+                <div class="header">
+                    <div class="title">Instant Payments</div>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="tab-container">
+                    <div class="tab active" onclick="switchPaymentTab('lightning')">Lightning</div>
+                    <div class="tab" onclick="switchPaymentTab('bitcoin')">Bitcoin</div>
+                </div>
+
+                <!-- Wallet Card -->
+                <div class="card" id="wallet-card">
+                    <div class="card-title">Available Balance</div>
+                    <div class="balance-amount">${walletData.lightning.balance.toFixed(8)} BTC</div>
+                    <div class="balance-usd">≈ $${(walletData.lightning.balance * 43000).toLocaleString()}</div>
+
+                    <div style="display: flex; align-items: center; padding-top: 16px; border-top: 1px solid #333;">
+                        <div style="width: 8px; height: 8px; background-color: #FBB040; border-radius: 4px; margin-right: 8px;"></div>
+                        <div style="font-size: 12px; color: #707070;">Instant payments</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <button class="action-button withdraw-button" onclick="handleSendPayment()">
+                    Send Payment
+                </button>
+                <button class="action-button deposit-button" onclick="handleReceivePayment()">
+                    Receive Payment
+                </button>
+
+                <!-- Recent Payments -->
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-title">Recent Lightning Payments</div>
+                    <div class="payment-list">
+                        ${walletData.payments.filter(p => p.type === 'lightning').map(payment => `
+                            <div class="payment-item">
+                                <div class="payment-left">
+                                    <div class="payment-icon" style="background-color: ${payment.type === 'lightning' ? '#FBB040' : '#F7931A'}20; color: ${payment.type === 'lightning' ? '#FBB040' : '#F7931A'}">
+                                        ${payment.type === 'lightning' ? '⚡' : '₿'}
+                                    </div>
+                                    <div class="payment-info">
+                                        <div class="payment-description">${payment.description}</div>
+                                        <div class="payment-time">${formatDate(payment.timestamp)}</div>
+                                    </div>
+                                </div>
+                                <div class="payment-right">
+                                    <div class="payment-amount negative">-${Math.abs(payment.amount).toFixed(8)} BTC</div>
+                                    <div class="status-container">
+                                        <div class="status-dot ${payment.status}"></div>
+                                        <div class="status-text ${payment.status}">${capitalizeFirst(payment.status)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show Settings Screen
+        function showSettings() {
+            updateActiveNav(2);
+            const mainContent = document.getElementById('main-content');
+
+            mainContent.innerHTML = `
+                <div class="header">
+                    <div class="title">Settings</div>
+                </div>
+
+                <!-- Wallet Section -->
+                <div class="card">
+                    <div class="card-title">Wallet</div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background-color: #2A2A2A; border-radius: 8px; margin-bottom: 8px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 48px; height: 48px; border-radius: 24px; background-color: #F7931A20; display: flex; align-items: center; justify-content: center;">
+                                    <div style="font-size: 16px; font-weight: bold; color: #F7931A;">₿</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px;">Xverse Wallet</div>
+                                    <div style="font-size: 14px; color: #A0A0A0; margin-bottom: 4px;">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</div>
+                                    <div style="font-size: 14px; font-weight: 500; color: #F7931A;">0.50000000 BTC</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="width: 8px; height: 8px; background-color: #10B981; border-radius: 4px; margin-bottom: 4px;"></div>
+                                <div style="font-size: 12px; color: #10B981; font-weight: 500;">Connected</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background-color: #2A2A2A; border-radius: 8px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 48px; height: 48px; border-radius: 24px; background-color: #FBB04020; display: flex; align-items: center; justify-content: center;">
+                                    <div style="font-size: 16px; font-weight: bold; color: #FBB040;">⚡</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px;">Lightning Wallet</div>
+                                    <div style="font-size: 14px; color: #A0A0A0; margin-bottom: 4px;">lnbc1...xyz</div>
+                                    <div style="font-size: 14px; font-weight: 500; color: #F7931A;">0.02500000 BTC</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="width: 8px; height: 8px; background-color: #10B981; border-radius: 4px; margin-bottom: 4px;"></div>
+                                <div style="font-size: 12px; color: #10B981; font-weight: 500;">Connected</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="action-button deposit-button" style="margin-bottom: 0;">
+                        + Connect New Wallet
+                    </button>
+                </div>
+
+                <!-- Security Section -->
+                <div class="card">
+                    <div class="card-title">Security</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background-color: #2A2A2A; border-radius: 8px; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-size: 16px; font-weight: 500; color: #FFFFFF; margin-bottom: 4px;">Biometric Authentication</div>
+                            <div style="font-size: 14px; color: #A0A0A0;">Use Face ID or fingerprint to secure your wallet</div>
+                        </div>
+                        <label style="position: relative; display: inline-block; width: 48px; height: 28px;">
+                            <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
+                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2A2A2A; border-radius: 28px; transition: .4s;"></span>
+                            <span style="position: absolute; content: ''; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; border-radius: 50%; transition: .4s;"></span>
+                        </label>
+                    </div>
+                    <button class="action-button withdraw-button" style="margin-bottom: 0;">
+                        Security Settings
+                    </button>
+                </div>
+
+                <!-- Preferences Section -->
+                <div class="card">
+                    <div class="card-title">Preferences</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background-color: #2A2A2A; border-radius: 8px; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-size: 16px; font-weight: 500; color: #FFFFFF; margin-bottom: 4px;">Push Notifications</div>
+                            <div style="font-size: 14px; color: #A0A0A0;">Receive alerts for deposits and yield payments</div>
+                        </div>
+                        <label style="position: relative; display: inline-block; width: 48px; height: 28px;">
+                            <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                            <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #F7931A; border-radius: 28px; transition: .4s;"></span>
+                            <span style="position: absolute; content: ''; height: 20px; width: 20px; left: 24px; bottom: 4px; background-color: white; border-radius: 50%; transition: .4s;"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="text-align: center; margin-top: 32px; padding: 24px;">
+                    <div style="font-size: 14px; color: #707070; margin-bottom: 4px;">CrossBTC v1.0.0</div>
+                    <div style="font-size: 14px; color: #707070;">Made with ❤️ for Bitcoin</div>
+                </div>
+            `;
+        }
+
+        // Helper functions
+        function updateActiveNav(index) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        function switchPaymentTab(type) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const walletCard = document.getElementById('wallet-card');
+            const balance = type === 'lightning' ? walletData.lightning : walletData.bitcoin;
+            const color = type === 'lightning' ? '#FBB040' : '#F7931A';
+            const description = type === 'lightning' ? 'Instant payments' : 'On-chain transfers';
+
+            walletCard.innerHTML = `
+                <div class="card-title">Available Balance</div>
+                <div class="balance-amount">${balance.balance.toFixed(8)} BTC</div>
+                <div class="balance-usd">≈ $${(balance.balance * 43000).toLocaleString()}</div>
+
+                <div style="display: flex; align-items: center; padding-top: 16px; border-top: 1px solid #333;">
+                    <div style="width: 8px; height: 8px; background-color: ${color}; border-radius: 4px; margin-right: 8px;"></div>
+                    <div style="font-size: 12px; color: #707070;">${description}</div>
+                </div>
+            `;
+
+            // Update payment list
+            const paymentList = document.querySelector('.payment-list');
+            const filteredPayments = walletData.payments.filter(p => p.type === type);
+
+            if (filteredPayments.length === 0) {
+                paymentList.innerHTML = `
+                    <div style="text-align: center; padding: 32px;">
+                        <div style="font-size: 16px; color: #A0A0A0; margin-bottom: 4px;">No ${type} payments yet</div>
+                        <div style="font-size: 14px; color: #707070;">Your ${type} transactions will appear here</div>
+                    </div>
+                `;
+            } else {
+                paymentList.innerHTML = filteredPayments.map(payment => `
+                    <div class="payment-item">
+                        <div class="payment-left">
+                            <div class="payment-icon" style="background-color: ${payment.type === 'lightning' ? '#FBB040' : '#F7931A'}20; color: ${payment.type === 'lightning' ? '#FBB040' : '#F7931A'}">
+                                ${payment.type === 'lightning' ? '⚡' : '₿'}
+                            </div>
+                            <div class="payment-info">
+                                <div class="payment-description">${payment.description}</div>
+                                <div class="payment-time">${formatDate(payment.timestamp)}</div>
+                            </div>
+                        </div>
+                        <div class="payment-right">
+                            <div class="payment-amount negative">-${Math.abs(payment.amount).toFixed(8)} BTC</div>
+                            <div class="status-container">
+                                <div class="status-dot ${payment.status}"></div>
+                                <div class="status-text ${payment.status}">${capitalizeFirst(payment.status)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function formatDate(date) {
+            const options = {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Action handlers
+        function handleDeposit() {
+            alert('Deposit functionality would open the deposit modal with Bitcoin/Lightning options.');
+        }
+
+        function handleWithdraw() {
+            alert('Withdraw functionality would open the withdraw modal with amount input.');
+        }
+
+        function handleClaimYield() {
+            alert('Claim functionality would process the yield claim to your wallet.');
+        }
+
+        function handleSendPayment() {
+            alert('Send Payment functionality would open payment screen with recipient input.');
+        }
+
+        function handleReceivePayment() {
+            alert('Receive Payment functionality would generate invoice/address for receiving funds.');
+        }
+
+        // Initialize the app
+        showHome();
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Add small random variation to balance
+            vaultData.yield += (Math.random() - 0.5) * 0.000001;
+            vaultData.balance = vaultData.principal + vaultData.yield;
+
+            // Update UI if we're on the home screen
+            const activeNavItem = document.querySelector('.nav-item.active');
+            if (activeNavItem && activeNavItem.querySelector('.nav-label').textContent === 'Vault') {
+                const balanceElements = document.querySelectorAll('.balance-amount');
+                if (balanceElements.length > 0) {
+                    balanceElements[0].textContent = `${vaultData.balance.toFixed(8)} BTC`;
+                }
+
+                const yieldElements = document.querySelectorAll('.yield-value');
+                if (yieldElements.length > 0) {
+                    yieldElements[0].textContent = `+${vaultData.yield.toFixed(8)} BTC`;
+                }
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
